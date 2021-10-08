@@ -1,0 +1,54 @@
+{
+    "name": "zendframework/solution",
+    "description": "Framework zend-mvc applications",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "framework",
+        "mvc",
+        "zf"
+    ],
+    "homepage": "http://framework.zend.com/",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^5.6 || ^7.0",
+        "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
+        "zendframework/zend-mvc": "^3.0.1",
+        "zfcampus/zf-development-mode": "^3.0",
+        "zendframework/zend-test" : "^3.0",
+        "zendframework/zend-json" : "^3.0",
+        "zendframework/zend-i18n" : "dev-master",
+        "doctrine/doctrine-orm-module": "dev-master as 1.0.9",
+        "doctrine/doctrine-module": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Certificate\\": "module/Certificate/src/",
+            "Currency\\": "module/Currency/src/",
+            "Issuer\\": "module/Issuer/src/",
+            "Market\\": "module/Market/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Certificate\\": "module/Certificate/test/",
+            "Currency\\": "module/Currency/test/",
+            "Issuer\\": "module/Issuer/test/",
+            "Market\\": "module/Market/test/"
+        }
+    },
+    "extra": [],
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "development-disable": "zf-development-mode disable",
+        "development-enable": "zf-development-mode enable",
+        "development-status": "zf-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable"
+        ],
+        "serve": "php -S 0.0.0.0:8080 -t public public/index.php",
+        "test": "phpunit"
+    }
+}

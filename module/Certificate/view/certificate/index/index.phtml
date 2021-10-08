@@ -1,0 +1,174 @@
+<?php
+// module/News/view/news/news/index.phtml:
+$title = 'All Certificaties';
+$this->headTitle($title);
+?>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        <?php echo $this->escapeHtml($title); ?>
+    </h1>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <p>
+                        <a class="btn btn-info" href="<?php echo $this->url('certificate', array('action' => 'add')); ?>"><?php echo 'Add Certificate'; ?></a>
+                    </p>
+                </div>
+                <div class="box-body">
+                    <table id="newsDataTable" class="table table-bordered table-hover dataTable" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th><?php echo 'ISIN'; ?></th>
+                                <th><?php echo 'Trading Market'; ?></th>
+                                <th><?php echo 'Currency'; ?></th>
+                                <th><?php echo 'Issuer'; ?></th>
+                                <th><?php echo 'Issuer Price'; ?></th>
+                                <th><?php echo 'Current Price'; ?></th>
+                                <th><?php echo 'Options'; ?></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section><!-- /.content -->
+
+<?php $this->inlineScript()->captureStart() ?>
+                
+$(document).ready(function () {
+    var datatable;
+    function fulldata() {
+        datatable = $('#newsDataTable').DataTable({
+            "destroy": true,
+            "lengthMenu": [[10, 20, 30, -1], [10, 20, 30, "All"]],
+            "searching": true,
+            "ordering": true,
+            "order": [[0, "desc"]],
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "<?php echo $this->url('certificate', array('action'=>'getAll'));?>",
+                "type": "POST"
+            },
+            "columnDefs": [{
+                    "targets": 0,
+                    "data": "ISIN",
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return data;
+                    }
+                }, {
+                    "targets": 1,
+                    "data": "trading_market",
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return data.xname;
+                    }
+                }, {
+                    "targets": 2,
+                    "data": "currency",
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return data.code;
+                    }
+                }, {
+                    "targets": 3,
+                    "data": "issuer",
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        return data.xname;
+                    }
+                }, {
+                    "targets": 4,
+                    "data": "issuerprice",
+                    "render": function (data, type, full, meta) {
+                        return data;
+                    }
+                }, {
+                    "targets": 5,
+                    "data": "currentprice",
+                    "render": function (data, type, full, meta) {
+                        return data;
+                    }
+                }, {
+                    "targets": 6,
+                    "data": "id",
+                    "orderable": false,
+                    "render": function (data, type, full, meta) {
+                        var activeicon = 'fa fa-close';
+                        var activemsg = 'Activate';
+                        if (full.active) {
+                            activeicon = 'fa fa-check';
+                            activemsg = 'Deactivate';
+                        }
+                        return "<a rel='" + data + "' class='btn btn-xs chstatus' data-toggle='tooltip' data-placement='top' title='" + activemsg + "'><i class='" + activeicon + "'></i></a>"
+                                + "<a href='<?php echo $this->url('certificate', array('action'=>'edit'));?>/" + data + "' class='btn btn-xs' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fa fa-edit'></i></a>"
+                                + "<a rel='" + data + "' class='btn btn-xs delete' style='color:red' data-toggle='tooltip' data-placement='top' title='Delete'><i class='fa fa-trash'></i></a>"
+                                + "<a href='<?php echo $this->url('certificate', array('action'=>'displayAsHtml'));?>/" + data + "' class='btn btn-xs' data-toggle='tooltip' data-placement='top' title='Display As HTML'><i class='fa fa fa-code'></i></a>"
+                                + "<a href='<?php echo $this->url('certificate', array('action'=>'displayAsXml'));?>/" + data + "' class='btn btn-xs' data-toggle='tooltip' data-placement='top' title='Display As XML'><i class='fa fa-file-code-o'></i></a>";
+                    }
+                }]
+        });
+    };
+    
+    fulldata();
+    
+    $('#newsDataTable tbody').on('click', '.chstatus', function () {
+        var data = $(this).attr('rel');
+        var el = this;
+        $.post(
+                "<?php echo $this->url('certificate', array('action'=>'chstatus'));?>/" + data,
+                function (data) {
+                var matches = data.match("\{.*\}");
+                d = JSON.parse(matches[0]) ;
+                    if (d.done === 'true') {
+                        if ($(el).attr('title') === "Activate") {
+                            $(el).attr('title', "Deactivate");
+                            $(el).find(".fa.fa-close").attr('class', 'fa fa-check');
+                        } else {
+                            $(el).attr('title', "Activate");
+                            $(el).find(".fa.fa-check").attr('class', 'fa fa-close');
+                        }
+                    } else {
+                        $('#error').html('<h4>Error In Submit!</h4><p>' + data.message + '</p>');
+                        $('#error').show(150);
+                    }
+                }
+        );
+    });
+    
+    $('#newsDataTable tbody').on('click', '.delete', function () {
+            var data = $(this).attr('rel');
+            var el = this;
+            bootbox.confirm("Are you sure?", function(result) {
+                if(result){
+                    $.post(
+                            "<?php echo $this->url('certificate', array('action'=>'delete'));?>/"+data,
+                            function (data){
+                                var matches = data.match("\{.*\}");
+                                d = JSON.parse(matches[0]) ;
+                                if (d.done === 'true') {
+                                    datatable.row( $(el).parents('tr') )
+					        .remove()
+					        .draw(false);
+                                }else{
+                                $('#error').html('<h4>Error In Submit!</h4><p>'+data.message+'</p>');
+                                    $('#error').show(150);
+                                }
+                            }
+                    );
+                }
+            }); 
+        });
+});    
+
+<?php $this->inlineScript()->captureEnd() ?>
+

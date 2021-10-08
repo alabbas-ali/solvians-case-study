@@ -1,0 +1,53 @@
+<?php
+$title = 'Certificaties';
+$this->headTitle($title);
+?>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        <?php echo $this->escapeHtml($title); ?>
+    </h1>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <p>
+                        <a class="btn btn-outline-info" href="<?php echo $this->url('home'); ?>"><?php echo 'Go Home'; ?></a>
+                    </p>
+                </div>
+                <div class="box-body">
+                    <div> <span style="font-size: medium"> ISIN : </span>  <?php echo $this->escapeHtml($certificate->ISIN); ?></div>
+                    <div> <span style="font-size: medium"> Market : </span>  <?php echo $this->escapeHtml($certificate->trading_market->xname); ?></div>
+                    <div> <span style="font-size: medium"> Issuer : </span> <?php echo $this->escapeHtml($certificate->issuer->xname); ?></div>
+                    <div> <span style="font-size: medium"> Issuer Price : </span>  <?php echo $this->escapeHtml($certificate->issuerprice); ?>  <?php echo $this->escapeHtml($certificate->currency->code); ?></div>
+                    <div> <span style="font-size: medium"> Current Price : </span>  <?php echo $this->escapeHtml($certificate->currentprice); ?>  <?php echo $this->escapeHtml($certificate->currency->code); ?></div>
+                    <?php if(is_a($certificate , 'Certificate\Model\BonusCertificate')){ ?>
+                        <div> <span style="font-size: medium"> Barrier Level : </span>  <?php echo $this->escapeHtml($certificate->getBarrierlevel()); ?>  <?php echo $this->escapeHtml($certificate->currency->code); ?></div>
+                        <div> <span style="font-size: medium"> Barrier Level Hit: </span>  <?php echo $this->escapeHtml($certificate->getHit()); ?>  </div>
+                    <?php } ?>
+                    <?php if(is_a($certificate , 'Certificate\Model\GuaranteeCertificate')){ ?>
+                        <div> <span style="font-size: medium"> Participation Rate : </span>  <?php echo $this->escapeHtml($certificate->getParticipationrate()); ?>  %</div>
+                    <?php } ?>
+                    <div>
+                        <h4>Documents :</h4>
+                        <?php foreach ($certificate->documents as $doc) : ?>
+                            <a href="<?php echo $doc->xpath ?>"> <i class='fa fa-file'></i> <?php echo $doc->xname ?> </a> </br>
+                        <?php endforeach; ?>
+                    </div>
+                    <div>
+                        <h4>Prices History :</h4>
+                        <?php foreach ($certificate->pricehistory as $pric) : ?>
+                            <div> 
+                                <span style="font-size: medium"> Date : </span> <?php echo $pric->updated_at->format('Y-m-d H:i:s'); ?> 
+                                <span style="font-size: medium"> Price : </span> <?php echo $pric->price ?>  <?php echo $this->escapeHtml($certificate->currency->code); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section><!-- /.content -->

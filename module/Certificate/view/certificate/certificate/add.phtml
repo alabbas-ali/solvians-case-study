@@ -1,0 +1,128 @@
+<?php
+$title = 'Add Certificaties';
+$this->headTitle($title);
+?>
+
+<section class="content-header">
+    <h1>
+        <?php echo $this->escapeHtml($title); ?>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="<?php echo $this->url('home') ?>"><i class="fa fa-dashboard"></i>Home</a></li>
+        <li class="active"><?php echo $this->escapeHtml($title); ?></li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- general form elements disabled -->
+            <div class="box box-primary">
+
+                <div class="box-body">
+
+                    <?php
+                    $form->setAttribute('action', $this->url('certificate', array('action' => 'add')));
+                    $form->setAttribute('data-toggle', 'validator');
+                    $form->setAttribute('role', 'form');
+                    $form->prepare();
+
+                    echo $this->form()->openTag($form);
+                    echo $this->formHidden($form->get('id'));
+                    ?>
+                    <div class="form-group">
+                        <label for='title'>ISIN</label>
+                        <?php
+                        echo $this->formRow($form->get('ISIN'));
+                        ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for='subtitle'>Market</label>
+                        <?php
+                        echo $this->formRow($form->get('trading_market'));
+                        ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for='artitle'>Currency </label>
+                        <?php
+                        echo $this->formRow($form->get('currency'));
+                        ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for='artitle'>Issuer </label>
+                        <?php
+                        echo $this->formRow($form->get('issuer'));
+                        ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for='artitle'>Issuer Price</label>
+                        <?php
+                        echo $this->formRow($form->get('issuerprice'));
+                        ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for='artitle'>Current Price</label>
+                        <?php
+                        echo $this->formRow($form->get('currentprice'));
+                        ?>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for='artitle'>Certificate Type</label>
+                        <!--<select class="form-control" name="certificatetype" id="certificatetype">
+                            <option value="0">Stander</option>
+                            <option value="1">Bonus Certificate</option>
+                            <option value="2">Guarantee Certificate</option>
+                        </select> -->
+                        <?php
+                        echo $this->formRow($form->get('certificatetype'));
+                        ?>
+                    </div>
+                    
+                    <div class="form-group" id="d1" style="display: none">
+                        <label for='artitle'>Barrier Level</label>
+                        <?php
+                        echo $this->formRow($form->get('barrierlevel'));
+                        ?>
+                    </div>
+                    
+                    <div class="form-group" id="d2" style="display: none">
+                        <label for='artitle'>Participation Rate</label>
+                        <?php
+                        echo $this->formRow($form->get('participationrate'));
+                        ?>
+                    </div>
+
+                    <div class="box-footer">
+                        <?php
+                        echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary'));
+                        echo $this->form()->closeTag();
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php $this->inlineScript()->captureStart() ?>
+    $(document).ready(function(){
+       $('#certificatetype').change(function() {
+            $('#d1').hide();
+            $('#d2').hide();
+            if($(this).val()==1){
+                $('#d1').show();
+            }else if($(this).val()==2){
+                $('#d2').show();
+            }
+       });
+    });
+<?php $this->inlineScript()->captureEnd() ?>
+
+
+
+
